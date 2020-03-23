@@ -1,3 +1,3 @@
 # Snake
 
-Snake game build with JavaScript.
+Snake game built with JavaScript.
