@@ -32,6 +32,8 @@ class Snake {
         this.blockHeight = this.height / this.LINES
         //Snake direction
         this.direction = null
+        //Snake next direction
+        this.nextDirection = null
         //Game is or not in pause
         this.pause = false
         //Last used difficulty
@@ -54,9 +56,10 @@ class Snake {
         this.setKeys()
     }
 
-    setDefaultValues(difficulty) {  
+    setDefaultValues(difficulty) {
         this.score = 0
         this.direction = 'left'
+        this.nextDirection = 'left'
         this.fruit = new Block(this.blockWidth * Math.floor(Math.random() * this.COLUMNS), this.blockHeight * Math.floor(Math.random() * this.LINES), this.blockWidth, this.blockHeight, '#0c0')
         this.snakeBody = [new Block(this.width / 2, this.height / 2, this.blockWidth, this.blockHeight, '#a12')]
 
@@ -91,7 +94,6 @@ class Snake {
 
         //Main loop
         while (this.alive && this.play) {
-            this.keyAlreadyPressed = false
             await this.sleep(this.timeBetweenMoves)
 
             //while (pause){}
@@ -101,6 +103,7 @@ class Snake {
                 //Sets score on screen
                 this.scoreCallback(`${this.score}`)
 
+                this.direction = this.nextDirection
                 this.alive = this.drawSnake(this.CONTEXT, this.snakeBody, this.blockWidth, this.blockHeight, this.direction, this.width, this.height, false)
 
                 let goodPosition = false
@@ -125,6 +128,7 @@ class Snake {
                 this.paintFruit()
             }
             else {
+                this.direction = this.nextDirection
                 this.alive = this.drawSnake(this.CONTEXT, this.snakeBody, this.blockWidth, this.blockHeight, this.direction, this.width, this.height, true)
             }
         }
@@ -257,34 +261,31 @@ class Snake {
      */
     setKeys() {
         document.addEventListener('keydown', (event) => {
-            if (!this.keyAlreadyPressed) {
-                switch (event.keyCode) {
-                    //LEFT key
-                    case 37:
-                        this.direction = this.direction != 'right' ? 'left' : 'right'
-                        break
-                    //UP key
-                    case 38:
-                        this.direction = this.direction != 'down' ? 'up' : 'down'
-                        break
-                    //RIGHT key
-                    case 39:
-                        this.direction = this.direction != 'left' ? 'right' : 'left'
-                        break
-                    //DOWN key
-                    case 40:
-                        this.direction = this.direction != 'up' ? 'down' : 'up'
-                        break
-                    //P key
-                    case 80:
-                        this.pause = !this.pause
-                        break
-                    //R key
-                    case 82:
-                        this.start(this.difficulty)
-                        break
-                }
-                this.keyAlreadyPressed = true
+            switch (event.keyCode) {
+                //LEFT key
+                case 37:
+                    this.nextDirection = this.direction != 'right' ? 'left' : 'right'
+                    break
+                //UP key
+                case 38:
+                    this.nextDirection = this.direction != 'down' ? 'up' : 'down'
+                    break
+                //RIGHT key
+                case 39:
+                    this.nextDirection = this.direction != 'left' ? 'right' : 'left'
+                    break
+                //DOWN key
+                case 40:
+                    this.nextDirection = this.direction != 'up' ? 'down' : 'up'
+                    break
+                //P key
+                case 80:
+                    this.pause = !this.pause
+                    break
+                //R key
+                case 82:
+                    this.start(this.difficulty)
+                    break
             }
         })
     }
